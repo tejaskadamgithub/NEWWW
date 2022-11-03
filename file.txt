@@ -1,0 +1,123 @@
+expt 1: benefit of clod infrast cloud9
+
+click on all service
+developer tool:
+Click on cloud9
+create environ
+write name
+next step
+abilit zone 1-a region (1a)
+next step
+create environment
+new tap open aws account
+IAM-user
+add new user
+click on aws amangement console
+uncheck req password
+next permission
+create group
+next next --- create user
+cpy password
+on lhs click on  user grups
+clck on grup name
+permission-add permission--attach policy
+search cloud9 (awscloud9)and enter and add permission
+git coomands
+----------------------------------------------------
+expt 3: kubernetes cluster arch/ sign up
+
+open aws
+clck on ec2 instance
+clck lunch insta
+type ubuntu 18.04(free) and select
+next .....
+ add tag key-name
+ value-anyname
+ next 
+ launch
+create a new pair
+
+download key pair
+launch instance
+view instance
+
+---------------------------------------------------
+
+expt 5: terraform lifecycle
+
+https/github.com/hashicorp/terraform/release
+ --to ckc latest vers
+
+https://release.hashicorp.com/terraform/
+download terraform
+
+unzip terraform..
+sudo mv terraform /usr/local/bin/
+whereis terraform --find were it is
+
+terraform -v
+dnf install -y awscli
+
+ec2 launch instance
+
+next...
+add tag
+key-name
+value-terraform
+nextt conf security
+type all  traffic-- source anywhere
+
+launch instance
+-------------------------------------------------
+
+expt 7 SAST process sonnar
+
+./sonar.sh console
+
+login sonarqume
+create new item on sonarqube
+
+---------------------------------------------
+
+expt 8: jenkin ci/cd pipelinnne
+
+search jenkins.war file
+ on terminal java -jar jenkins
+  to change java vesion to 1.8
+	sudo alternatives --config java
+ 	press 1 and enter
+java -jar  jenkins.war
+
+open sonarqube
+
+create project manually
+
+locally
+demo5
+generate
+copy token
+source code-python
+linux
+ change sonar-properties code (demo5)
+ create py file
+   def startF():
+	prinnt("welcome")breal
+startf()
+
+-
+copy sonar commands from sonarqube
+and paste to terminal file of py file
+
+
+Now jenkins
+paste code on github
+ and paste link on jenkins  project
+
+select poll SCM
+ schedule:  */2****
+ 
+select build-execute shell
+ paste sonar-scanner commands
+
+Apply-save and build
+ 
