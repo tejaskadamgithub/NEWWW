@@ -1,0 +1,147 @@
+1. Install and Configure Nagios Core
+Update the system packages.
+
+$ sudo apt update
+Install all the required packages.
+
+$ sudo apt install wget unzip curl openssl build-essential libgd-dev libssl-dev libapache2-mod-php php-gd php apache2 -y
+Download Nagios Core Setup files. To download the latest version, visit the official releases site.
+
+$ wget https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.4.6.tar.gz
+Extract the downloaded files.
+
+$ sudo tar -zxvf nagios-4.4.6.tar.gz
+Navigate to the setup directory.
+
+$ cd nagios-4.4.6
+Run the Nagios Core configure script.
+
+$ sudo ./configure
+Compile the main program and CGIs.
+
+$ sudo make all
+Make and install group and user.
+
+$ sudo make install-groups-users
+Add www-data directories user to the nagios group.
+
+$ sudo usermod -a -G nagios www-data
+Install Nagios.
+
+$ sudo make install
+Initialize all the installation configuration scripts.
+
+$ sudo make install-init
+Install and configure permissions on the configs' directory.
+
+$ sudo make install-commandmode
+Install sample config files.
+
+$ sudo make install-config
+Install apache files.
+
+$ sudo make install-webconf
+Enable apache rewrite mode.
+
+$ sudo a2enmod rewrite
+Enable CGI config.
+
+$ sudo a2enmod cgi
+Restart the Apache service.
+
+$ sudo systemctl restart apache2
+Create a user and set the password when prompted.
+
+$ sudo htpasswd -c /usr/local/nagios/etc/htpasswd.users admin
+2. Install Nagios Plugins
+Download the Nagios Core plugin. To download the latest plugins, visit the plugins download page.
+
+$ cd ~/
+
+$ wget https://nagios-plugins.org/download/nagios-plugins-2.3.3.tar.gz
+Extract the downloaded plugin.
+
+$ sudo tar -zxvf nagios-plugins-2.3.3.tar.gz
+Navigate to the plugins' directory.
+
+$ cd nagios-plugins-2.3.3/
+Run the plugin configure script.
+
+$ sudo ./configure --with-nagios-user=nagios --with-nagios-group=nagios
+Compile Nagios Core plugins.
+
+$ sudo make
+Install the plugins.
+
+$ sudo make install
+3. Verify Nagios Configuration
+Verify the Nagios Core configuration.
+
+$ sudo /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
+Start the Nagios service.
+
+$ sudo systemctl start nagios
+Enable Nagios service to run at system startup.
+
+$ sudo systemctl enable nagios
+4. Access Nagios Web Interface
+Open your web browser and access Nagios web interface via the URL http://ServerIP/nagios. For example:
+
+http://192.0.2.10/nagios
+You have successfully installed Nagios Core on your server. To log in, use admin as your username and the password you set during the user account creation step as your password. You can now access the dashboard and begin configuring Nagios.
+
+5. Add Remote Hosts
+Now that your Nagios server is configured, it's time to configure a remote host to monitor.
+
+To get started, connect as root over SSH to the host you want to monitor.
+
+Install Prerequisites
+To monitor hosts, we need to add them to Nagios. By default, Nagios only monitors localhost (the server it's running on). We're going to add hosts that are part of our network to gain even more control. You will need to use the following instructions on all hosts that you want to monitor.
+
+First, install nagios-plugins and nagios-nrpe-server:
+
+# apt-get install nagios-plugins nagios-nrpe-server
+Configure NRPE
+Next, open the /etc/nagios/nrpe.cfg file. Replace the value of allowed_hosts with 127.0.0.1,0.0.0.0 replacing the second IP with the IP address of the Nagios server.
+
+We will now open the file /etc/nagios/nrpe.cfg and replace a couple of values.
+
+Replace the value of server_address to the private IP address of the host.
+
+Set allowed_hosts to the private IP address of your Nagios server.
+
+Execute df -h /, copy the output, and put that as the value of command. It indicates your root file system.
+
+Save the file when you are finished.
+
+Now restart NRPE:
+
+service nagios-nrpe-server restart
+Add the Host to Nagios
+Now that we've configured the host we're going to monitor, we need to switch back to our Nagios server and add the host to it. Open the following file with your favorite editor:
+
+# nano /usr/local/nagios/etc/servers/host.cfg
+Use the following block as a template. Replace host with an appropriate name for your remote host, and update the host_name, alias, and address values accordingly.
+
+define host {
+
+        use                             linux-server
+
+        host_name                       yourhost
+
+        alias                           My first Apache server
+
+        address                         1.2.3.4
+
+        max_check_attempts              5
+
+        check_period                    24x7
+
+        notification_interval           30
+
+        notification_period             24x7
+
+}
+This will allow you to simply monitor whether the server is up or down. Now reload Nagios:
+
+# service nagios reload
